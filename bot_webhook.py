@@ -4,8 +4,8 @@ import os
 app = Flask(__name__)
 
 # ตั้งค่า Username & Password จาก Environment Variables
-USERNAME = os.getenv("WEBHOOK_USER", "admin")  # Default เป็น "admin"
-PASSWORD = os.getenv("WEBHOOK_PASS", "password")  # Default เป็น "password"
+USERNAME = os.getenv("WEBHOOK_USER", "ppxng")  # Default เป็น "admin"
+PASSWORD = os.getenv("WEBHOOK_PASS", "pass1234")  # Default เป็น "password"
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
