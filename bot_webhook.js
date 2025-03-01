@@ -71,25 +71,21 @@ const recommendations = {
 
 // 🔹 ฟังก์ชันตอบกลับแต่ละ Intent
 function sayHi(req, res) {
-    res.json({ fulfillmentText: responsesSayHi[Math.floor(Math.random() * responsesSayHi.length)] });
+    res.json({ fulfillmentText: responsesSayHi[Math.floor(Math.random() * responsesSayHi.length)], outputContexts: [
+        { name: req.body.session + "/contexts/askLocation", lifespanCount: 5 }
+    ]});
 }
 
 function askLocation(req, res) {
-    res.json({ fulfillmentText: responsesAskLocation[Math.floor(Math.random() * responsesAskLocation.length)] });
+    res.json({ fulfillmentText: responsesAskLocation[Math.floor(Math.random() * responsesAskLocation.length)], outputContexts: [
+        { name: req.body.session + "/contexts/askTypes", lifespanCount: 1 }
+    ]});
 }
 
 function askTypes(req, res) {
     const location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
-    res.json({ fulfillmentText: responsesAskTypes[Math.floor(Math.random() * responsesAskTypes.length)], outputContexts: [
-        { name: req.body.session + "/contexts/await_usage", lifespanCount: 1, parameters: { location_name: location } }
-    ]});
-}
-
-function recommendInternet(req, res) {
-    const location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
     const usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
-    // ค้นหาภูมิภาคของจังหวัด
     let region = "default";
     for (const [key, value] of Object.entries(regions)) {
         if (value.includes(location)) {
@@ -98,7 +94,6 @@ function recommendInternet(req, res) {
         }
     }
 
-    // ระบุระดับการใช้เน็ต
     const usageLevel = usageLevels[usage] || "default";
     const recommendation = recommendations[region]?.[usageLevel] || "Speedโม่แนะนำ **AIS 5G หรือ True 5G** ที่รองรับการใช้งานทุกพื้นที่ค่ะ!";
 
@@ -106,7 +101,9 @@ function recommendInternet(req, res) {
 }
 
 function askLocationYes(req, res) {
-    res.json({ fulfillmentText: responsesAskLocationYes[Math.floor(Math.random() * responsesAskLocationYes.length)] });
+    res.json({ fulfillmentText: responsesAskLocationYes[Math.floor(Math.random() * responsesAskLocationYes.length)], outputContexts: [
+        { name: req.body.session + "/contexts/askLocation", lifespanCount: 5 }
+    ]});
 }
 
 function noGoodbye(req, res) {
@@ -122,7 +119,6 @@ app.post("/webhook", (req, res) => {
     intentMap.set("sayhi", sayHi);
     intentMap.set("ask_location", askLocation);
     intentMap.set("ask_types", askTypes);
-    intentMap.set("recommend_internet", recommendInternet);
     intentMap.set("ask_location-yes", askLocationYes);
     intentMap.set("no-goodbye", noGoodbye);
 
