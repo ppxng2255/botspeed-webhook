@@ -141,21 +141,34 @@ function sayHi(req, res) {
 }
 
 function askLocation(req, res) {
-    res.json({ fulfillmentText: responsesAskTypes[Math.floor(Math.random() * responsesAskLocation.length)],
-         outputContexts: [
-        { name: req.body.session + "/contexts/askTypes", lifespanCount: 1 }
-    ]});
+    const location = req.body.queryResult.parameters.Location_name || "ไม่ระบุ";
+    
+    // ค้นหาภูมิภาคของจังหวัด
+    const region = regions[location] || "ไม่ระบุ";
+
+    res.json({
+        fulfillmentText: `โอเคค่ะ! คุณอยู่ในเขต **${region}** 🏡 คุณต้องการใช้เน็ตทำอะไรบ้างคะ? เช่น ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ`,
+        outputContexts: [
+            { name: req.body.session + "/contexts/ask_types", lifespanCount: 5, parameters: { location_name: location, region: region } }
+        ]
+    });
 }
 
 function askTypes(req, res) {
-    const location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
+    const location = req.body.queryResult.outputContexts?.find(ctx => ctx.name.includes("/contexts/ask_types"))?.parameters.Location_name || "ไม่ระบุ";
+    const region = req.body.queryResult.outputContexts?.find(ctx => ctx.name.includes("/contexts/ask_types"))?.parameters.region || "ไม่ระบุ";
     const usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
-    const region = Object.keys(regions).find(key => regions[key].includes(location)) || "ไม่ระบุ";  
 
+    // ระบุระดับการใช้เน็ต (มาก / ปานกลาง / น้อย)
     const usageLevel = usageLevels[usage] || "default";
-    const recommendation = recommendations[region]?.[usageLevel] || "Speedโม่แนะนำ **AIS 5G หรือ True 5G** ที่รองรับการใช้งานทุกพื้นที่ค่ะ!";
 
-    res.json({ fulfillmentText: `${recommendation} 🚀 ต้องการให้น้องแนะนำเพิ่มไหมงับบบ? (Yes/No)` });
+    // ค้นหาแพ็กเกจที่เหมาะสม
+    const recommendation = recommendations[region]?.[usageLevel] || "ทำไมไม่เข้าเกรณ์";
+
+    res.json({
+        fulfillmentText: `สำหรับการใช้เน็ต **${usage}** ในเขต **${region}**, ${recommendation} 🚀 ต้องการแนะนำเพิ่มไหม? (Yes/No)`,
+        outputContexts: [{ name: req.body.session + "/contexts/ask_location_yes", lifespanCount: 5 }]
+    });
 }
 
 function askLocationYes(req, res) {
