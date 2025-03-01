@@ -66,30 +66,10 @@ const recommendations = {
         "มาก": "Speedโม่แนะนำ **AIS Max Speed 5G** ⚡",
         "ปานกลาง": "Speedโม่แนะนำ **AIS Business Fiber** 🏡",
         "น้อย": "Speedโม่แนะนำ **Dtac Unlimited Social** 📲"
-    },
-    "อีสาน": {
-        "มาก": "Speedโม่แนะนำ **Dtac Turbo Gaming** 🎮",
-        "ปานกลาง": "Speedโม่แนะนำ **True Business Fiber** 💻",
-        "น้อย": "Speedโม่แนะนำ **AIS Social Plus** 🤳"
-    },
-    "ใต้": {
-        "มาก": "Speedโม่แนะนำ **True 5G Super Max** 🎥",
-        "ปานกลาง": "Speedโม่แนะนำ **AIS Work Anywhere** ✨",
-        "น้อย": "Speedโม่แนะนำ **Dtac Social Everywhere** 🏝"
-    },
-    "ตะวันออก": {
-        "มาก": "Speedโม่แนะนำ **AIS 5G Ultimate Stream** 🌊",
-        "ปานกลาง": "Speedโม่แนะนำ **True Work Pro** 💼",
-        "น้อย": "Speedโม่แนะนำ **Dtac Lite Social** 📌"
-    },
-    "ตะวันตก": {
-        "มาก": "Speedโม่แนะนำ **AIS 5G Speed Boost** 🚄",
-        "ปานกลาง": "Speedโม่แนะนำ **True Work Home** 🏠",
-        "น้อย": "Speedโม่แนะนำ **AIS Basic Social** 📲"
     }
 };
 
-// 🔹 ฟังก์ชันตอบกลับแต่ละ Intent (รวมการแนะนำอินเทอร์เน็ต)
+// 🔹 ฟังก์ชันตอบกลับแต่ละ Intent
 function sayHi(req, res) {
     res.json({ fulfillmentText: responsesSayHi[Math.floor(Math.random() * responsesSayHi.length)] });
 }
@@ -99,6 +79,13 @@ function askLocation(req, res) {
 }
 
 function askTypes(req, res) {
+    const location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
+    res.json({ fulfillmentText: responsesAskTypes[Math.floor(Math.random() * responsesAskTypes.length)], outputContexts: [
+        { name: req.body.session + "/contexts/await_usage", lifespanCount: 1, parameters: { location_name: location } }
+    ]});
+}
+
+function recommendInternet(req, res) {
     const location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
     const usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
@@ -135,6 +122,7 @@ app.post("/webhook", (req, res) => {
     intentMap.set("sayhi", sayHi);
     intentMap.set("ask_location", askLocation);
     intentMap.set("ask_types", askTypes);
+    intentMap.set("recommend_internet", recommendInternet);
     intentMap.set("ask_location-yes", askLocationYes);
     intentMap.set("no-goodbye", noGoodbye);
 
