@@ -12,16 +12,16 @@ const responsesSayHi = [
 ];
 
 const responsesAskLocation = [
-    "โอเคค่ะ! คุณต้องการใช้เน็ตที่จังหวัดไหนคะ? (เช่น กรุงเทพ, เชียงใหม่, ฯลฯ)",
-    "เข้าใจแล้วค่ะ! กรุณาระบุจังหวัดที่ต้องการใช้เน็ตค่ะ",
-    "ค่ะ! กรุณาระบุจังหวัดที่ต้องการให้แนะนำเน็ตค่ะ"
+    "คุณต้องการใช้เน็ตทำอะไรบ้างคะ? (ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ)1",
+    "กรุณาระบุการใช้เน็ตที่ต้องการค่ะ เช่น Netflix, เล่นเกม, ประชุมออนไลน์, ฯลฯ2",
+    "ส่วนใหญ่ใช้เน็ตทำอะไรคะ? บอกน้องSpeedโม่หน่อยค่ะ เช่น ทำธุระ, เที่ยว, เล่นเกม, ฯลฯ3"
 ];
 
-const responsesAskTypes = [
-    "คุณต้องการใช้เน็ตทำอะไรบ้างคะ? (ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ)",
-    "กรุณาระบุการใช้เน็ตที่ต้องการค่ะ เช่น Netflix, เล่นเกม, ประชุมออนไลน์, ฯลฯ",
-    "ส่วนใหญ่ใช้เน็ตทำอะไรคะ? บอกน้องSpeedโม่หน่อยค่ะ เช่น ทำธุระ, เที่ยว, เล่นเกม, ฯลฯ"
-];
+// const responsesAskTypes = [
+//     "คุณต้องการใช้เน็ตทำอะไรบ้างคะ? (ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ)",
+//     "กรุณาระบุการใช้เน็ตที่ต้องการค่ะ เช่น Netflix, เล่นเกม, ประชุมออนไลน์, ฯลฯ",
+//     "ส่วนใหญ่ใช้เน็ตทำอะไรคะ? บอกน้องSpeedโม่หน่อยค่ะ เช่น ทำธุระ, เที่ยว, เล่นเกม, ฯลฯ"
+// ];
 
 const responsesAskLocationYes = [
     "น้องยินดีให้คำแนะนำเพิ่มค่ะ กรุณาระบุจังหวัดใหม่ที่ต้องการค่ะ",
@@ -77,7 +77,8 @@ function sayHi(req, res) {
 }
 
 function askLocation(req, res) {
-    res.json({ fulfillmentText: responsesAskLocation[Math.floor(Math.random() * responsesAskLocation.length)], outputContexts: [
+    res.json({ fulfillmentText: responsesAskLocation[Math.floor(Math.random() * responsesAskLocation.length)],
+         outputContexts: [
         { name: req.body.session + "/contexts/askTypes", lifespanCount: 1 }
     ]});
 }
