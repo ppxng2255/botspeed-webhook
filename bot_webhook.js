@@ -141,7 +141,7 @@ function sayHi(req, res) {
 }
 
 function askLocation(req, res) {
-    let location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
+    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
     location = location.replace(/(ไป|ที่|จังหวัด)/g, "").trim();
 
     console.log("📌 (askLocation) Location:", location); // Debug ดูค่า location
@@ -162,7 +162,7 @@ function askLocation(req, res) {
 }
 
 function askTypes(req, res) {
-    let location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
+    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
     let usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
     // ✅ Debug ดูค่าที่บอทได้รับ
