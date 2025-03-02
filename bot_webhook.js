@@ -144,7 +144,7 @@ function askLocation(req, res) {
     let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
     location = location.replace(/(ไป|ที่|จังหวัด)/g, "").trim();
 
-    console.log("📌 (askLocation) Location:", location); // Debug ดูค่า location
+    console.log("📌 (askLocation) Location:", location); // Debug
 
     if (!Object.values(regions).flat().includes(location)) {
         res.json({
@@ -159,25 +159,24 @@ function askLocation(req, res) {
             {
                 name: req.body.session + "/contexts/ask_types",
                 lifespanCount: 5,
-                parameters: { location: location } // **ส่ง location ไป askTypes**
+                parameters: { location: location } // ✅ ส่ง location ไป askTypes()
             }
         ]
     });
 }
 
 function askTypes(req, res) {
-    let location = req.body.queryResult.parameters.location || 
+    let location = req.body.queryResult.parameters.location ||
                    req.body.outputContexts?.find(ctx => ctx.name.includes("ask_types"))?.parameters?.location || 
                    "ไม่ระบุ"; 
 
     let usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
-    // ✅ แก้ไข: ถ้า `usage` เป็น Array ให้ดึงค่าออกมา
     if (Array.isArray(usage)) {
-        usage = usage[0];
+        usage = usage[0]; // ✅ ถ้าเป็น array ให้ดึงตัวแรกออกมา
     }
 
-    console.log("📌 Location:", location);
+    console.log("📌 (askTypes) Location:", location); // Debug
     console.log("📌 Usage:", usage);
 
     let region = Object.keys(regions).find(key => regions[key].includes(location)) || "default";
