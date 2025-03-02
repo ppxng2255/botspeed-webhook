@@ -141,10 +141,11 @@ function sayHi(req, res) {
 }
 
 function askLocation(req, res) {
-    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
+    let location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
     location = location.replace(/(ไป|ที่|จังหวัด)/g, "").trim();
 
-    // ถ้า location ไม่ใช่จังหวัดที่ถูกต้อง ให้ขอให้ผู้ใช้ป้อนใหม่
+    console.log("📌 (askLocation) Location:", location); // Debug ดูค่า location
+
     if (!Object.values(regions).flat().includes(location)) {
         res.json({
             fulfillmentText: `ขออภัยค่ะ น้อง Speedโม่ไม่พบจังหวัด "${location}" กรุณาระบุจังหวัดที่ถูกต้องค่ะ!`
@@ -161,7 +162,7 @@ function askLocation(req, res) {
 }
 
 function askTypes(req, res) {
-    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
+    let location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
     let usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
     // ✅ Debug ดูค่าที่บอทได้รับ
