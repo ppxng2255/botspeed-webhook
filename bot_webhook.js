@@ -48,12 +48,12 @@ const regions = {
 
 // 🔹 แนะนำอินเทอร์เน็ตตามภูมิภาคและระดับการใช้งาน
 const recommendations = {
-    "เหนือ": "Speedโม่ ขอแนะนำ **True 5G Ultra Max** 🏡 เหมาะกับพื้นที่ภูเขาเยอะๆ",
-    "กลาง": "Speedโม่ ขอแนะนำ **AIS Max Speed 5G** 🚄 เหมาะกับพื้นที่ในเมือง คนแออัด",
-    "อีสาน": "Speedโม่ ขอแนะนำ **Dtac Turbo Gaming**  เหมาะกับการใช้งานพื้นที่ราบ แถวภาคอีสาน",
-    "ใต้": "Speedโม่ขอ แนะนำ **True 5G Super Max**  สำหรับพื้นที่ชายฝั่งและบนเกาะ คนเยอะ",
-    "ตะวันออก": "Speedโม่ขอ แนะนำ **Dtac 5G Ultra Max** สำหรับการใช้เน็ตปานกลาง",
-    "ตะวันตก": "Speedโม่ขอ แนะนำ **AIS 5G Ultra Max** ⚡ สำหรับการใช้งานที่ต้องการความเร็วสูง"
+    "เหนือ": "Speedโม่ ขอแนะนำ 🌈**True 5G Ultra Max** เหมาะกับพื้นที่ภูเขาเยอะๆ 🏔️ ",
+    "กลาง": "Speedโม่ ขอแนะนำ 🚩**AIS Max Speed 5G** เหมาะกับพื้นที่ในเมือง คนแออัด 🚄 ",
+    "อีสาน": "Speedโม่ ขอแนะนำ 🌀**Dtac Turbo Gaming**  เหมาะกับการใช้งานพื้นที่ราบ แถวภาคอีสาน 🏕️",
+    "ใต้": "Speedโม่ขอ แนะนำ 🌈**True 5G Super Max**  สำหรับพื้นที่ชายฝั่งและบนเกาะ คนเยอะ 🥥",
+    "ตะวันออก": "Speedโม่ขอ แนะนำ 🌀**Dtac 5G Ultra Max** สำหรับการใช้เน็ตปานกลาง ",
+    "ตะวันตก": "Speedโม่ขอ แนะนำ 🚩**AIS 5G Ultra Max**  สำหรับการใช้งานที่ต้องการความเร็วสูง ⚡"
 };
 
 function sayHi(req, res) {
@@ -86,7 +86,7 @@ function askLocation(req, res) {
 
     // ✅ ตอบกลับผู้ใช้
     res.json({
-        fulfillmentText: `พี่ๆจะไป **${location}** ใช่ไหมคะ? 🎯 ขอแนะนำ ${recommendation} \n\n✨ ต้องการแนะนำเพิ่มไหมคะ? (Yes/No)`,
+        fulfillmentText: `พี่ๆจะไป **${location}** อยู่${region} ใช่ไหมคะ?  ${recommendation} \n\n✨ ต้องการแนะนำเพิ่มไหมคะ? ✨`,
         outputContexts: [{ name: req.body.session + "/contexts/await_yes_no", lifespanCount: 5 }]
     });
 }
