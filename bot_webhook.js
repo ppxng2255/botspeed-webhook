@@ -166,17 +166,22 @@ function askLocation(req, res) {
 }
 
 function askTypes(req, res) {
-    let location = req.body.queryResult.parameters.location ||
-                   req.body.outputContexts?.find(ctx => ctx.name.includes("ask_types"))?.parameters?.location || 
-                   "ไม่ระบุ"; 
-
+    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
     let usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
+
+    // ✅ ค้นหา location จาก outputContexts เผื่อ Dialogflow ไม่ส่งมาใน parameters
+    if (location === "ไม่ระบุ") {
+        const context = req.body.outputContexts?.find(ctx => ctx.name.includes("ask_types"));
+        if (context && context.parameters && context.parameters.location) {
+            location = context.parameters.location;
+        }
+    }
 
     if (Array.isArray(usage)) {
         usage = usage[0]; // ✅ ถ้าเป็น array ให้ดึงตัวแรกออกมา
     }
 
-    console.log("📌 (askTypes) Location:", location); // Debug
+    console.log("📌 (askTypes) Location:", location);
     console.log("📌 Usage:", usage);
 
     let region = Object.keys(regions).find(key => regions[key].includes(location)) || "default";
