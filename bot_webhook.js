@@ -64,8 +64,8 @@ function sayHi(req, res) {
 }
 
 function askLocation(req, res) {
-    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
-    location = location.replace(/(ไป|ที่|จังหวัด)/g, "").trim();  // ลบคำที่ไม่จำเป็นออก
+    let location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
+    location = location.replace(/(ไป|ที่|จังหวัด|เที่ยว|อยู่|ค่ะ|ครับ)/g, "").trim();  // ลบคำที่ไม่จำเป็นออก
 
     // ✅ หาภูมิภาคของจังหวัด
     let region = Object.keys(regions).find(key => regions[key].includes(location)) || null;
