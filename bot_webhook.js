@@ -17,11 +17,11 @@ const responsesAskLocation = [
     "ส่วนใหญ่ใช้เน็ตทำอะไรคะ? บอกน้องSpeedโม่หน่อยค่ะ เช่น ทำธุระ, เที่ยว, เล่นเกม, ฯลฯ1"
 ];
 
-const responsesAskTypes = [
-    "คุณต้องการใช้เน็ตทำอะไรบ้างคะ? (ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ)2",
-    "กรุณาระบุการใช้เน็ตที่ต้องการค่ะ เช่น Netflix, เล่นเกม, ประชุมออนไลน์, ฯลฯ2",
-    "ส่วนใหญ่ใช้เน็ตทำอะไรคะ? บอกน้องSpeedโม่หน่อยค่ะ เช่น ทำธุระ, เที่ยว, เล่นเกม, ฯลฯ2"
-];
+// const responsesAskTypes = [
+//     "คุณต้องการใช้เน็ตทำอะไรบ้างคะ? (ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ)2",
+//     "กรุณาระบุการใช้เน็ตที่ต้องการค่ะ เช่น Netflix, เล่นเกม, ประชุมออนไลน์, ฯลฯ2",
+//     "ส่วนใหญ่ใช้เน็ตทำอะไรคะ? บอกน้องSpeedโม่หน่อยค่ะ เช่น ทำธุระ, เที่ยว, เล่นเกม, ฯลฯ2"
+// ];
 
 const responsesAskLocationYes = [
     "น้องยินดีให้คำแนะนำเพิ่มค่ะ กรุณาระบุจังหวัดใหม่ที่ต้องการค่ะ",
@@ -133,51 +133,42 @@ const recommendations = {
 
 };
 
-// 🔹 ฟังก์ชันตอบกลับแต่ละ Intent
 function sayHi(req, res) {
-    res.json({ fulfillmentText: responsesSayHi[Math.floor(Math.random() * responsesSayHi.length)], outputContexts: [
-        { name: req.body.session + "/contexts/askLocation", lifespanCount: 5 }
-    ]});
+    res.json({
+        fulfillmentText: responsesSayHi[Math.floor(Math.random() * responsesSayHi.length)],
+        outputContexts: [{ name: req.body.session + "/contexts/ask_location", lifespanCount: 5 }]
+    });
 }
 
 function askLocation(req, res) {
-    const location = req.body.queryResult.parameters.Location_name || "ไม่ระบุ";
-    
-    // ค้นหาภูมิภาคของจังหวัด
-    const region = regions[location] || "ไม่ระบุ";
-
     res.json({
-        fulfillmentText: `โอเคค่ะ! คุณอยู่ในเขต **${region}** 🏡 คุณต้องการใช้เน็ตทำอะไรบ้างคะ? เช่น ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ`,
-        outputContexts: [
-            { name: req.body.session + "/contexts/ask_types", lifespanCount: 5, parameters: { location_name: location, region: region } }
-        ]
+        fulfillmentText: responsesAskLocation[Math.floor(Math.random() * responsesAskLocation.length)],
+        outputContexts: [{ name: req.body.session + "/contexts/ask_types", lifespanCount: 5 }]
     });
 }
 
 function askTypes(req, res) {
-    const location = req.body.queryResult.outputContexts?.find(ctx => ctx.name.includes("/contexts/ask_types"))?.parameters.Location_name || "ไม่ระบุ";
-    const region = req.body.queryResult.outputContexts?.find(ctx => ctx.name.includes("/contexts/ask_types"))?.parameters.region || "ไม่ระบุ";
+    const location_name = req.body.queryResult.parameters.location || "ไม่ระบุ";
     const usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
-    // ระบุระดับการใช้เน็ต (มาก / ปานกลาง / น้อย)
+    const region = Object.keys(regions).find(key => regions[key].includes(location_name)) || "ไม่ระบุ";
     const usageLevel = usageLevels[usage] || "default";
-
-    // ค้นหาแพ็กเกจที่เหมาะสม
-    const recommendation = recommendations[region]?.[usageLevel] || "ทำไมไม่เข้าเกรณ์";
+    const recommendation = recommendations[region]?.[usageLevel] || "ไม่บอกกกกก ต้องถูก";
 
     res.json({
-        fulfillmentText: `สำหรับการใช้เน็ต **${usage}** ในเขต **${region}**, ${recommendation} 🚀 ต้องการแนะนำเพิ่มไหม? (Yes/No)`,
-        outputContexts: [{ name: req.body.session + "/contexts/ask_location_yes", lifespanCount: 5 }]
+        fulfillmentText: `${recommendation} 🚀 ต้องการแนะนำเพิ่มไหม? (Yes/No)`,
+        outputContexts: [{ name: req.body.session + "/contexts/await_yes_no", lifespanCount: 5 }]
     });
 }
 
-function askLocationYes(req, res) {
-    res.json({ fulfillmentText: responsesAskLocationYes[Math.floor(Math.random() * responsesAskLocationYes.length)], outputContexts: [
-        { name: req.body.session + "/contexts/askLocation", lifespanCount: 3 }
-    ]});
+function askTypesYes(req, res) {
+    res.json({
+        fulfillmentText: responsesAskLocationYes[Math.floor(Math.random() * responsesAskLocationYes.length)],
+        outputContexts: [{ name: req.body.session + "/contexts/ask_location", lifespanCount: 5 }]
+    });
 }
 
-function noGoodbye(req, res) {
+function askTypesNo(req, res) {
     res.json({ fulfillmentText: responsesNoGoodbye[Math.floor(Math.random() * responsesNoGoodbye.length)] });
 }
 
@@ -185,18 +176,17 @@ function noGoodbye(req, res) {
 app.post("/webhook", (req, res) => {
     const intent = req.body.queryResult.intent.displayName;
 
-    // 🔹 Map Intent กับ Function ที่ต้องการเรียกใช้
     const intentMap = new Map();
     intentMap.set("sayhi", sayHi);
     intentMap.set("ask_location", askLocation);
     intentMap.set("ask_types", askTypes);
-    intentMap.set("ask_location-yes", askLocationYes);
-    intentMap.set("no-goodbye", noGoodbye);
+    intentMap.set("ask_types-yes", askTypesYes);
+    intentMap.set("ask_types-no", askTypesNo);
 
     if (intentMap.has(intent)) {
         intentMap.get(intent)(req, res);
     } else {
-        res.json({ fulfillmentText: "ขอโทษค่ะ น้องSpeedโม่ ไม่เข้าใจคำขอของคุณ 😢 พิมพ์ให้รู้เรื่องหน่อยค่ะ" });
+        res.json({ fulfillmentText: "ขออภัยค่ะ Speedโม่ไม่เข้าใจคำขอของคุณ 😢" });
     }
 });
 
