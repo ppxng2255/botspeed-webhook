@@ -65,6 +65,9 @@ function sayHi(req, res) {
 
 function askLocation(req, res) {
     let location = req.body.queryResult.parameters.location_name || "ไม่ระบุ";
+    if(Array.isArray(location)){
+        location = location[0];
+    }  // แก้ไขปัญหาการรับค่าจาก Dialogflow
     location = location.replace(/(ไป|ที่|จังหวัด|เที่ยว|อยู่|ค่ะ|ครับ)/g, "").trim();  // ลบคำที่ไม่จำเป็นออก
 
     // ✅ หาภูมิภาคของจังหวัด
