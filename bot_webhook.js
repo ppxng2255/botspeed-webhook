@@ -74,7 +74,7 @@ function askLocation(req, res) {
 
     // ✅ ตอบกลับผู้ใช้
     res.json({
-        fulfillmentText: `พี่ๆจะไป **${location}** ที่อยู่${region}‼️ ใช่ไหมคะ?  ${recommendation} \n\n✨ ต้องการแนะนำเพิ่มไหมคะ? ✨`,
+        fulfillmentText: `พี่ๆจะไป **${location}** ที่อยู่ภาค${region}‼️ ใช่ไหมคะ?  ${recommendation} \n\n✨ ต้องการแนะนำเพิ่มไหมคะ? (Yse/No) ✨`,
         outputContexts: [{ name: req.body.session + "/contexts/await_yes_no", lifespanCount: 5 }]
     });
 }
