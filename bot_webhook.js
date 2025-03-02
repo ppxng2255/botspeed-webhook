@@ -156,30 +156,37 @@ function askLocation(req, res) {
     res.json({
         fulfillmentText: `โอเคค่ะ! คุณต้องการใช้เน็ตที่ ${location} ด้านไหน? (ดูหนัง, เล่นเกม, ทำงาน, ฯลฯ)`,
         outputContexts: [
-            { name: req.body.session + "/contexts/ask_types", lifespanCount: 5 }
+            {
+                name: req.body.session + "/contexts/ask_types",
+                lifespanCount: 5,
+                parameters: { location: location } // **ส่ง location ไป askTypes**
+            }
         ]
     });
 }
 
 function askTypes(req, res) {
-    let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
+    let location = req.body.queryResult.parameters.location || 
+                   req.body.outputContexts?.find(ctx => ctx.name.includes("ask_types"))?.parameters?.location || 
+                   "ไม่ระบุ"; 
+
     let usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
-    // ✅ Debug ดูค่าที่บอทได้รับ
+    // ✅ แก้ไข: ถ้า `usage` เป็น Array ให้ดึงค่าออกมา
+    if (Array.isArray(usage)) {
+        usage = usage[0];
+    }
+
     console.log("📌 Location:", location);
     console.log("📌 Usage:", usage);
 
-    // ✅ หาภูมิภาคของจังหวัด
     let region = Object.keys(regions).find(key => regions[key].includes(location)) || "default";
     console.log("📌 Region:", region);
 
-    // ✅ หาระดับการใช้เน็ต
     let usageLevel = usageLevels[usage] || "default";
     console.log("📌 Usage Level:", usageLevel);
 
-    // ✅ ตรวจสอบว่ามีคำแนะนำอินเตอร์เน็ตที่ถูกต้องหรือไม่
     let recommendation = recommendations[region]?.[usageLevel] || "❌ ไม่พบคำแนะนำที่ตรงกับข้อมูลของคุณ";
-
     console.log("📌 Recommendation:", recommendation);
 
     res.json({ 
