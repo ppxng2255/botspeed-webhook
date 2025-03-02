@@ -148,16 +148,26 @@ function askLocation(req, res) {
 }
 
 function askTypes(req, res) {
-    const location_name = req.body.queryResult.parameters.location || "ไม่ระบุ";
+    // รับค่าจาก Dialogflow
+    const location = req.body.queryResult.parameters.location || "ไม่ระบุ";
     const usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
-    const region = Object.keys(regions).find(key => regions[key].includes(location_name)) || "ไม่ระบุ";
-    const usageLevel = usageLevels[usage] || "default";
-    const recommendation = recommendations[region]?.[usageLevel] || "ไม่บอกกกกก ต้องถูก";
+    // **1️⃣ แปลงจังหวัดเป็นภูมิภาค**
+    const region = Object.keys(regions).find(key => regions[key].includes(location)) || "default";  
 
-    res.json({
-        fulfillmentText: `${recommendation} 🚀 ต้องการแนะนำเพิ่มไหม? (Yes/No)`,
-        outputContexts: [{ name: req.body.session + "/contexts/await_yes_no", lifespanCount: 5 }]
+    // **2️⃣ แปลงประเภทกิจกรรมเป็นระดับการใช้เน็ต**
+    const usageLevel = usageLevels[usage] || "default";
+
+    // **3️⃣ นำภูมิภาค + ระดับการใช้เน็ต ไปแมทช์กับแพ็กเกจอินเทอร์เน็ต**
+    const recommendation = recommendations[region]?.[usageLevel] || 
+        "Speedโม่แนะนำ **AIS 5G หรือ True 5G** ที่รองรับการใช้งานทุกพื้นที่ค่ะ!";
+
+    // **4️⃣ ตอบกลับ + ตั้ง Context เพื่อให้รอรับ Yes/No**
+    res.json({ 
+        fulfillmentText: `${recommendation} 🚀 ต้องการให้น้องแนะนำเพิ่มไหม? (Yes/No)`,
+        outputContexts: [
+            { name: req.body.session + "/contexts/await_yes_no", lifespanCount: 5 }
+        ]
     });
 }
 
