@@ -164,12 +164,22 @@ function askTypes(req, res) {
     let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
     let usage = req.body.queryResult.parameters.types_use || "ไม่ระบุ";
 
-    // เช็คว่าค่า location มีอยู่ใน regions หรือไม่
-    let region = Object.keys(regions).find(key => regions[key].includes(location)) || "default";  
+    // ✅ Debug ดูค่าที่บอทได้รับ
+    console.log("📌 Location:", location);
+    console.log("📌 Usage:", usage);
 
+    // ✅ หาภูมิภาคของจังหวัด
+    let region = Object.keys(regions).find(key => regions[key].includes(location)) || "default";
+    console.log("📌 Region:", region);
+
+    // ✅ หาระดับการใช้เน็ต
     let usageLevel = usageLevels[usage] || "default";
-    let recommendation = recommendations[region]?.[usageLevel] || 
-        "9hksdlgh'dajg'ffgj;aldnhd999999999999999999";
+    console.log("📌 Usage Level:", usageLevel);
+
+    // ✅ ตรวจสอบว่ามีคำแนะนำอินเตอร์เน็ตที่ถูกต้องหรือไม่
+    let recommendation = recommendations[region]?.[usageLevel] || "❌ ไม่พบคำแนะนำที่ตรงกับข้อมูลของคุณ";
+
+    console.log("📌 Recommendation:", recommendation);
 
     res.json({ 
         fulfillmentText: `${recommendation} 🚀 ต้องการให้น้องแนะนำเพิ่มไหม? (Yes/No)`,
