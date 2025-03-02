@@ -142,6 +142,7 @@ function sayHi(req, res) {
 
 function askLocation(req, res) {
     let location = req.body.queryResult.parameters.location || "ไม่ระบุ";
+    location = location.replace(/(ไป|ที่|จังหวัด)/g, "").trim();
 
     // ถ้า location ไม่ใช่จังหวัดที่ถูกต้อง ให้ขอให้ผู้ใช้ป้อนใหม่
     if (!Object.values(regions).flat().includes(location)) {
